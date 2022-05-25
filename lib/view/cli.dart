@@ -31,7 +31,7 @@ class _CLIState extends State<CLI> {
         children: [
           Expanded(
               child: Container(
-                padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(10),
             color: Colors.black,
             child: ListView.builder(
               itemCount: responseEmitter.data.length,
@@ -78,9 +78,11 @@ class _CLIState extends State<CLI> {
     commandInputFocusNode.requestFocus();
     responseEmitter.addCommand(commandInputController.value.text);
     try {
-      String response =
-          CommandParser().parse(commandInputController.value.text);
-      responseEmitter.addResponse(response);
+      CommandParser().parse(commandInputController.value.text).then((response) {
+        if(response != "" && response != null){
+          responseEmitter.addResponse(response.toString());
+        }
+      });
     } catch (e) {
       responseEmitter.addException(e.toString());
     }

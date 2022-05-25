@@ -2,9 +2,15 @@ import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 
 class Emitter extends ChangeNotifier {
-  final List<Widget> data = [];
+  static final Emitter _emitter = Emitter._internal();
 
-  Emitter();
+  factory Emitter() {
+    return _emitter;
+  }
+
+  Emitter._internal();
+
+  final List<Widget> data = [];
 
   void addCommand(String command) {
     data.add(Text(

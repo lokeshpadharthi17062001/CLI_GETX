@@ -14,3 +14,7 @@ const Color EXCEPTION_COLOR = Colors.red;
 const String TEST_COMMAND = "test";
 const String SIGN_UP_COMMAND = "signup";
 const String SIGN_IN_COMMAND = "signin";
+const String UPDATE_PASSWORD_COMMAND = "updatepwd";
+const String RESET_PASSWORD_LINK_COMMAND = "resetpwdlink";
+const String RESET_PASSWORD_COMMAND = "resetpwd";
+const String CURRENT_USER_COMMAND = "currentuser";
