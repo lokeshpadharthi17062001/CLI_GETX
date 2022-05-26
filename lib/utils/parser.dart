@@ -7,7 +7,7 @@ class CommandParser {
       List<String> splitted = command!.split(' ');
       switch (splitted[0].command) {
         case Command.test:
-          return splitted.toString().replaceAll(RegExp(r','), "");
+          return Future(() => splitted.toString().replaceAll(RegExp(r','), ""));
         case Command.signUp:
           checkLen(splitted.length, 2);
           return FirebaseRepository().signUp(splitted[1], splitted[2]);

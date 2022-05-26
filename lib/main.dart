@@ -21,6 +21,7 @@ class ConqurCLIApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Conqur Backend Tester',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.grey,
         textTheme: GoogleFonts.ubuntuMonoTextTheme(
