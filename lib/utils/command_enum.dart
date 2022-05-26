@@ -26,8 +26,8 @@ extension CommandParserExtension on String {
         return Command.updatePassword;
       case RESET_PASSWORD_LINK_COMMAND:
         return Command.passwordResetLink;
-      case RESET_PASSWORD_COMMAND:
-        return Command.passwordReset;
+      // case RESET_PASSWORD_COMMAND:
+      //   return Command.passwordReset;
       default:
         return Command.unknown;
     }

@@ -22,9 +22,9 @@ class CommandParser {
         case Command.passwordResetLink:
           checkLen(splitted.length, 1);
           return FirebaseRepository().resetPasswordLink(splitted[1]);
-        case Command.passwordReset:
-          checkLen(splitted.length, 2);
-          return FirebaseRepository().resetPassword(splitted[1], splitted[2]);
+        // case Command.passwordReset:
+        //   checkLen(splitted.length, 2);
+        //   return FirebaseRepository().resetPassword(splitted[1], splitted[2]);
         case Command.unknown:
           throw "Unknown Command";
         default:

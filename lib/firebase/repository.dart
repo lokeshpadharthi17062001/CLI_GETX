@@ -89,8 +89,9 @@ class FirebaseRepository {
   }
 
   Future resetPasswordLink(String email) async {
+    var acs = ActionCodeSettings(url: "http://localhost:58136/#/", handleCodeInApp: true);
     try {
-      await firebaseAuth.sendPasswordResetEmail(email: email);
+      await firebaseAuth.sendPasswordResetEmail(email: email, actionCodeSettings: acs);
       return "Password reset link has been sent to your email";
     } on FirebaseAuthException catch (e) {
       Exceptionemitter.addException(e.toString());
@@ -100,16 +101,16 @@ class FirebaseRepository {
     }
   }
 
-  Future resetPassword(String code, String password) async {
-    try {
-      await firebaseAuth.confirmPasswordReset(
-          code: code, newPassword: password);
-      return "Password updated successfully!";
-    } on FirebaseAuthException catch (e) {
-      Exceptionemitter.addException(e.toString());
-      throw e.code;
-    } catch (e) {
-      throw e;
-    }
-  }
+  // Future resetPassword(String code, String password) async {
+  //   try {
+  //     await firebaseAuth.confirmPasswordReset(
+  //         code: code, newPassword: password);
+  //     return "Password updated successfully!";
+  //   } on FirebaseAuthException catch (e) {
+  //     Exceptionemitter.addException(e.toString());
+  //     throw e.code;
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
 }
