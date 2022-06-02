@@ -1,5 +1,5 @@
 import 'package:conqur_backend_test/firebase/repository.dart';
-import 'package:conqur_backend_test/utils/command_enum.dart';
+import 'package:conqur_backend_test/utils/enum.dart';
 
 class CommandParser {
   parse(String? command) {
