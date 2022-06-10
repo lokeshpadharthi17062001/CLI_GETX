@@ -15,7 +15,13 @@ class CommandParser {
           checkLen(splitted.length, 2);
           return FirebaseRepository().signIn(splitted[1], splitted[2]);
         case Command.currentUser:
-          return FirebaseRepository().CurrentUser;
+          return FirebaseRepository().currentUser;
+        case Command.signOut:
+          return FirebaseRepository().signout;
+        case Command.accessType:
+          return FirebaseRepository().accessType;
+        case Command.getCoachTeam:
+          return FirebaseRepository().getCoachTeam;
         case Command.updatePassword:
           checkLen(splitted.length, 1);
           return FirebaseRepository().updatePassword(splitted[1]);

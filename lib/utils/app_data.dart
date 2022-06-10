@@ -1,3 +1,4 @@
+import 'package:conqur_backend_test/utils/enum.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AppData {
@@ -9,5 +10,10 @@ class AppData {
 
   AppData._internal();
 
-  late UserCredential user;
+  late UserCredential? user;
+  late String? org_id;
+  late AccessType? accessType;
+
+
+
 }
