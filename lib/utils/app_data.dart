@@ -10,10 +10,7 @@ class AppData {
 
   AppData._internal();
 
-  late UserCredential? user;
-  late String? org_id;
-  late AccessType? accessType;
-
-
-
+  User? user;
+  String? org_id;
+  AccessType? accessType;
 }

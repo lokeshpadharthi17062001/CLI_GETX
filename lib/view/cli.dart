@@ -79,8 +79,12 @@ class _CLIState extends State<CLI> {
     responseEmitter.addCommand(commandInputController.value.text);
     try {
       CommandParser().parse(commandInputController.value.text).then((response) {
-        if(response != "" && response != null){
-          responseEmitter.addResponse(response.toString());
+        if (response != "" && response != null) {
+          if (response is List) {
+            responseEmitter.addResponseList(response);
+          } else {
+            responseEmitter.addResponse(response.toString());
+          }
         }
       });
     } catch (e) {

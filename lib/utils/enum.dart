@@ -10,7 +10,12 @@ enum Command {
   updatePassword,
   passwordResetLink,
   passwordReset,
-  getCoachTeam,
+  getTeamList,
+  getCoachList,
+  getAthleteList,
+  getSensorList,
+  getProfile,
+  getOrgData,
   unknown
 }
 
@@ -29,12 +34,22 @@ extension CommandParserExtension on String {
         return Command.currentUser;
       case ACCESS_TYPE_COMMAND:
         return Command.accessType;
-      case COACH_TEAM_DATA:
-        return Command.getCoachTeam;
+      case ORG_TEAM_LIST:
+        return Command.getTeamList;
+      case ORG_COACH_LIST:
+        return Command.getCoachList;
+      case ORG_ATHLETE_LIST:
+        return Command.getAthleteList;
+      case ORG_SENSOR_LIST:
+        return Command.getSensorList;
+      case USER_PROFILE:
+        return Command.getProfile;
       case UPDATE_PASSWORD_COMMAND:
         return Command.updatePassword;
       case RESET_PASSWORD_LINK_COMMAND:
         return Command.passwordResetLink;
+      case ORGANIZATION_DATA_COMMAND:
+        return Command.getOrgData;
       // case RESET_PASSWORD_COMMAND:
       //   return Command.passwordReset;
       default:
@@ -85,8 +100,4 @@ extension CollectionsExtension on Collections {
   }
 }
 
-enum AccessType{
-  athlete,
-  coach,
-  unauthorized
-}
+enum AccessType { athlete, coach, unauthorized }

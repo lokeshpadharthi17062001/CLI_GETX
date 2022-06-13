@@ -8,6 +8,7 @@ class CommandParser {
       switch (splitted[0].command) {
         case Command.test:
           return Future(() => splitted.toString().replaceAll(RegExp(r','), ""));
+        // return FirebaseRepository().testFunc();
         case Command.signUp:
           checkLen(splitted.length, 2);
           return FirebaseRepository().signUp(splitted[1], splitted[2]);
@@ -20,8 +21,18 @@ class CommandParser {
           return FirebaseRepository().signout;
         case Command.accessType:
           return FirebaseRepository().accessType;
-        case Command.getCoachTeam:
-          return FirebaseRepository().getCoachTeam;
+        case Command.getTeamList:
+          return FirebaseRepository().getTeamList;
+        case Command.getCoachList:
+          return FirebaseRepository().getCoachList;
+        case Command.getAthleteList:
+          return FirebaseRepository().getAthleteList;
+        case Command.getSensorList:
+          return FirebaseRepository().getSensorList;
+        case Command.getOrgData:
+          return FirebaseRepository().orgData;
+        case Command.getProfile:
+          return FirebaseRepository().profile;
         case Command.updatePassword:
           checkLen(splitted.length, 1);
           return FirebaseRepository().updatePassword(splitted[1]);

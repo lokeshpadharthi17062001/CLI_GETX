@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/view/cli.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const ConqurCLIApp());
 }
 

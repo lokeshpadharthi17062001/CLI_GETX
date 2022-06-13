@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -25,6 +27,24 @@ class Emitter extends ChangeNotifier {
     data.add(Text(
       response,
       style: TextStyle(color: RESPONSE_COLOR, fontSize: FONT_SIZE),
+    ));
+    data.add(SizedBox(height: 10));
+    notifyListeners();
+  }
+
+  void addResponseList(List response) {
+    data.add(ListView.builder(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      itemCount: response.length,
+      itemBuilder: (context, index) {
+        return Padding(
+            padding: EdgeInsets.only(bottom: 10),
+            child: Text(
+              "$index : ${response[index].data().toString()}",
+              style: TextStyle(color: RESPONSE_COLOR, fontSize: FONT_SIZE),
+            ));
+      },
     ));
     data.add(SizedBox(height: 10));
     notifyListeners();
