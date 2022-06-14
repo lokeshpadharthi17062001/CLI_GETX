@@ -16,6 +16,7 @@ enum Command {
   getSensorList,
   getProfile,
   getOrgData,
+  addTeam,
   unknown
 }
 
@@ -34,13 +35,13 @@ extension CommandParserExtension on String {
         return Command.currentUser;
       case ACCESS_TYPE_COMMAND:
         return Command.accessType;
-      case ORG_TEAM_LIST:
+      case TEAM_LIST:
         return Command.getTeamList;
-      case ORG_COACH_LIST:
+      case COACH_LIST:
         return Command.getCoachList;
-      case ORG_ATHLETE_LIST:
+      case ATHLETE_LIST:
         return Command.getAthleteList;
-      case ORG_SENSOR_LIST:
+      case SENSOR_LIST:
         return Command.getSensorList;
       case USER_PROFILE:
         return Command.getProfile;
@@ -50,6 +51,8 @@ extension CommandParserExtension on String {
         return Command.passwordResetLink;
       case ORGANIZATION_DATA_COMMAND:
         return Command.getOrgData;
+      case ADD_TEAM:
+        return Command.addTeam;
       // case RESET_PASSWORD_COMMAND:
       //   return Command.passwordReset;
       default:

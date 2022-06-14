@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:conqur_backend_test/utils/app_data.dart';
@@ -375,24 +377,42 @@ class FirebaseRepository {
     }
   }
 
-  cfCallable() async {
+  addTeam(String teamName) async {
+    AppData().org_id = "25pqvQuAsl60gKtm6WQa";
     try {
-      final result =
-          await FirebaseFunctions.instance.httpsCallable('testFunc').call();
-      print(result);
-    } on FirebaseFunctionsException catch (error) {
-      print(error.code);
-      print(error.details);
-      print(error.message);
+      HttpsCallableResult result =
+          await FirebaseFunctions.instance.httpsCallable('addTeam').call({
+        'organization_id': AppData().org_id,
+        'name': '$teamName',
+        'established_on': DateTime.now().millisecondsSinceEpoch,
+        'head_coach': null,
+        'sport_type': null
+      });
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      Exceptionemitter.addException(e.toString());
+      throw e;
     }
   }
 
-  cfHttp() async {
+  cfCallableTest() async {
     try {
-      final result = await _httpClient.get(base_url + "randomNumber");
-      print(result);
-    } on DioError catch (error) {
-      print(error.message);
+      HttpsCallableResult result =
+          await FirebaseFunctions.instance.httpsCallable('testFunc').call();
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      Exceptionemitter.addException(e.toString());
+      throw e;
+    }
+  }
+
+  cfHttpTest() async {
+    try {
+      Response result = await _httpClient.get(base_url + "randomNumber");
+      return result.data;
+    } on DioError catch (e) {
+      Exceptionemitter.addException(e.toString());
+      throw e;
     }
   }
 }

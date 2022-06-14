@@ -7,9 +7,7 @@ class CommandParser {
       List<String> splitted = command!.split(' ');
       switch (splitted[0].command) {
         case Command.test:
-          // return Future(() => splitted.toString().replaceAll(RegExp(r','), ""));
-          return FirebaseRepository().cfCallable(); // onCall cloud func
-        // return FirebaseRepository().cfHttp(); // http cloud func
+          return Future(() => splitted.toString().replaceAll(RegExp(r','), ""));
         case Command.signUp:
           checkLen(splitted.length, 2);
           return FirebaseRepository().signUp(splitted[1], splitted[2]);
@@ -40,6 +38,9 @@ class CommandParser {
         case Command.passwordResetLink:
           checkLen(splitted.length, 1);
           return FirebaseRepository().resetPasswordLink(splitted[1]);
+        case Command.addTeam:
+          checkLen(splitted.length, 1);
+          return FirebaseRepository().addTeam(splitted[1]);
         // case Command.passwordReset:
         //   checkLen(splitted.length, 2);
         //   return FirebaseRepository().resetPassword(splitted[1], splitted[2]);
