@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:conqur_backend_test/utils/app_data.dart';
 import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/utils/enum.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
@@ -17,6 +18,10 @@ class FirebaseRepository {
   FirebaseRepository._internal();
 
   Emitter Exceptionemitter = Emitter();
+
+  final Dio _httpClient = Dio();
+
+  final base_url = "https://us-central1-testproject-3c42a.cloudfunctions.net/";
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -367,6 +372,27 @@ class FirebaseRepository {
     }
     if (AppData().org_id == null) {
       orgData;
+    }
+  }
+
+  cfCallable() async {
+    try {
+      final result =
+          await FirebaseFunctions.instance.httpsCallable('testFunc').call();
+      print(result);
+    } on FirebaseFunctionsException catch (error) {
+      print(error.code);
+      print(error.details);
+      print(error.message);
+    }
+  }
+
+  cfHttp() async {
+    try {
+      final result = await _httpClient.get(base_url + "randomNumber");
+      print(result);
+    } on DioError catch (error) {
+      print(error.message);
     }
   }
 }
