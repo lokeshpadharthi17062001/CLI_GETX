@@ -395,6 +395,39 @@ class FirebaseRepository {
     }
   }
 
+  addCoach(String email) async {
+    AppData().org_id = "25pqvQuAsl60gKtm6WQa";
+    email = "coach@org-${AppData().org_id}.com";
+    try {
+      HttpsCallableResult result =
+          await FirebaseFunctions.instance.httpsCallable('addCoach').call({
+        'organization_id': AppData().org_id,
+        'email': '$email',
+        
+      });
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      Exceptionemitter.addException(e.toString());
+      throw e;
+    }
+  }
+
+  createCoach(String email) async {
+    AppData().org_id = "25pqvQuAsl60gKtm6WQa";
+    email = "coach@org-${AppData().org_id}.com";
+    try {
+      HttpsCallableResult result =
+          await FirebaseFunctions.instance.httpsCallable('addCoach').call({
+        'organization_id': AppData().org_id,
+        'email': '$email',
+      });
+      return result.data;
+    } on FirebaseFunctionsException catch (e) {
+      Exceptionemitter.addException(e.toString());
+      throw e;
+    }
+  }
+
   cfCallableTest() async {
     try {
       HttpsCallableResult result =
