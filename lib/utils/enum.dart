@@ -8,15 +8,38 @@ enum Command {
   accessType,
   currentUser,
   updatePassword,
-  passwordResetLink,
   passwordReset,
   getTeamList,
   getCoachList,
   getAthleteList,
   getSensorList,
   getProfile,
+  editProfile,
+  cacheProfile,
   getOrgData,
   addTeam,
+  addCoach,
+  removeCoach,
+  removeTeam,
+  addAthlete,
+  removeAthlete,
+  assignCoach,
+  unassignCoach,
+  assignAthlete,
+  unassignAthlete,
+  registerSensor,
+  unRegisterSensor,
+  assignSensor,
+  unassignSensor,
+  mySensor,
+  createOrganization,
+  inviteOrganization,
+  createSession,
+  getSessiondata,
+  viewSessiondata,
+  help,
+  getreport,
+  getmanager,
   unknown
 }
 
@@ -45,16 +68,62 @@ extension CommandParserExtension on String {
         return Command.getSensorList;
       case USER_PROFILE:
         return Command.getProfile;
+      case EDIT_PROFILE:
+        return Command.editProfile;
+      case CACHE_PROFILE:
+        return Command.cacheProfile;
       case UPDATE_PASSWORD_COMMAND:
         return Command.updatePassword;
-      case RESET_PASSWORD_LINK_COMMAND:
-        return Command.passwordResetLink;
+      case RESET_PASSWORD:
+        return Command.passwordReset;
       case ORGANIZATION_DATA_COMMAND:
         return Command.getOrgData;
       case ADD_TEAM:
         return Command.addTeam;
-      // case RESET_PASSWORD_COMMAND:
-      //   return Command.passwordReset;
+      case ADD_COACH:
+        return Command.addCoach;
+      case REMOVE_COACH:
+        return Command.removeCoach;
+      case REMOVE_TEAM:
+        return Command.removeTeam;
+      case ADD_ATHLETE:
+        return Command.addAthlete;
+      case REMOVE_ATHLETE:
+        return Command.removeAthlete;
+      case ASSIGN_ATHLETE:
+        return Command.assignAthlete;
+      case ASSIGN_COACH:
+        return Command.assignCoach;
+      case UNASSIGN_COACH:
+        return Command.unassignCoach;
+      case UNASSIGN_ATHLETE:
+        return Command.unassignAthlete;
+      case REGISTER_SENSOR:
+        return Command.registerSensor;
+      case UNREGISTER_SENSOR:
+        return Command.unRegisterSensor;
+      case ASSIGN_SENSOR:
+        return Command.assignSensor;
+      case UNASSIGN_SENSOR:
+        return Command.unassignSensor;
+      case ASSIGNED_SENSOR:
+        return Command.mySensor;
+      case CREATE_ORGANISATION:
+        return Command.createOrganization;
+      case INVITE_ORGANISATION:
+        return Command.inviteOrganization;
+      case CREATE_SESSION:
+        return Command.createSession;
+      case GET_SESSION_DATA:
+        return Command.getSessiondata;
+      case VIEW_SESSION_DATA:
+        return Command.viewSessiondata;
+      case HELP_COMMAND:
+        return Command.help;
+      case GET_REPORT:
+        return Command.getreport;
+      case GET_MANAGER:
+        return Command.getmanager;
       default:
         return Command.unknown;
     }
@@ -62,7 +131,7 @@ extension CommandParserExtension on String {
 }
 
 enum Collections {
-  Athlete,
+  Athletes,
   Coach,
   Team,
   Organization,
@@ -77,7 +146,7 @@ enum Collections {
 extension CollectionsExtension on Collections {
   String get id {
     switch (this) {
-      case Collections.Athlete:
+      case Collections.Athletes:
         return ATHLETE_COLLECTION;
       case Collections.Coach:
         return COACH_COLLECTION;
@@ -103,4 +172,4 @@ extension CollectionsExtension on Collections {
   }
 }
 
-enum AccessType { athlete, coach, unauthorized }
+enum AccessType { athlete, coach,organization_admin, unauthorized }

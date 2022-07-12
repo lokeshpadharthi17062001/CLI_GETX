@@ -1,3 +1,5 @@
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:conqur_backend_test/plot.dart';
 import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/utils/parser.dart';
@@ -62,6 +64,12 @@ class _CLIState extends State<CLI> {
                 ),
               )),
               TextButton(
+                  onPressed: () => commandInputController.clear(),
+                  child: Text(
+                    "CLEAR",
+                    style: TextStyle(color: Colors.black),
+                  )),
+              TextButton(
                   onPressed: () => sendCommand(),
                   child: Text(
                     "SEND",
@@ -74,10 +82,11 @@ class _CLIState extends State<CLI> {
     );
   }
 
-  sendCommand() {
+  sendCommand() async {
     commandInputFocusNode.requestFocus();
     responseEmitter.addCommand(commandInputController.value.text);
     try {
+
       CommandParser().parse(commandInputController.value.text).then((response) {
         if (response != "" && response != null) {
           if (response is List) {
@@ -87,6 +96,19 @@ class _CLIState extends State<CLI> {
           }
         }
       });
+      if (commandInputController.value.text.split(' ')[0] ==
+          'view-session-data') {
+        var plot_data = await FirebaseFunctions.instance
+            .httpsCallable('get_session_data')
+            .call({
+          'session_id': commandInputController.value.text.split(' ')[1]
+        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Sync(plot_data.data)),
+        );
+      }
+
     } catch (e) {
       responseEmitter.addException(e.toString());
     }
