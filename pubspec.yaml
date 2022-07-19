@@ -45,6 +45,7 @@ dependencies:
   dio: ^4.0.6
   syncfusion_flutter_charts: ^20.2.36
   fl_chart: ^0.55.0
+  flutter_cache: ^0.1.0
 
 dev_dependencies:
   flutter_test:

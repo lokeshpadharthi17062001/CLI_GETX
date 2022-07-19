@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
 

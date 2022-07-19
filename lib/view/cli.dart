@@ -4,6 +4,7 @@ import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/utils/parser.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 
 class CLI extends StatefulWidget {
@@ -16,7 +17,8 @@ class CLI extends StatefulWidget {
 class _CLIState extends State<CLI> {
   TextEditingController commandInputController = TextEditingController();
   FocusNode commandInputFocusNode = FocusNode();
-
+  ScrollController listScrollController = ScrollController();
+  var debug_information = false;
   late Emitter responseEmitter;
 
   @override
@@ -36,6 +38,7 @@ class _CLIState extends State<CLI> {
             padding: EdgeInsets.all(10),
             color: Colors.black,
             child: ListView.builder(
+              controller: listScrollController,
               itemCount: responseEmitter.data.length,
               itemBuilder: (context, index) {
                 return responseEmitter.data[index];
@@ -44,9 +47,34 @@ class _CLIState extends State<CLI> {
           )),
           Row(
             children: [
-              Padding(
+              if(debug_information)
+                Padding(
                   padding: EdgeInsets.only(left: 10, right: 10),
-                  child: Icon(Icons.arrow_forward_ios_sharp, size: 14)),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        debug_information = !debug_information;
+                      });
+                    },
+                  ))
+              else
+                Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.arrow_forward_ios_sharp,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          debug_information = !debug_information;
+                        });
+                      },
+                    )),
               Expanded(
                   child: Container(
                 child: TextField(
@@ -86,15 +114,16 @@ class _CLIState extends State<CLI> {
     commandInputFocusNode.requestFocus();
     responseEmitter.addCommand(commandInputController.value.text);
     try {
-
-      CommandParser().parse(commandInputController.value.text).then((response) {
-        if (response != "" && response != null) {
+      CommandParser().parse(commandInputController.value.text).then((response) async {
+        if (response != "" && response != null && !debug_information) {
           if (response is List) {
             responseEmitter.addResponseList(response);
           } else {
             responseEmitter.addResponse(response.toString());
           }
+          await align_response(listScrollController);
         }
+
       });
       if (commandInputController.value.text.split(' ')[0] ==
           'view-session-data') {
@@ -111,6 +140,17 @@ class _CLIState extends State<CLI> {
 
     } catch (e) {
       responseEmitter.addException(e.toString());
+      align_response(listScrollController);
     }
   }
+}
+
+align_response (listScrollController)async{
+  await Future.delayed(const Duration(milliseconds: 300));
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    listScrollController.animateTo(
+        listScrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.linear);
+  });
 }

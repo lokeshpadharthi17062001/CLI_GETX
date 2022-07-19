@@ -16,8 +16,10 @@ class _SyncState extends State<Sync> {
   List<_ChartData> chartData = [];
   List<_ChartData> chartDatatwo = [];
   List<_ChartData> chartDatathree = [];
+
   @override
   void initState() {
+
 
     var utc=[],utc_full=[],acc=[],rri=[],steps=[];
     for(var i=0;i<widget.data['utc_full'].length;i++)
@@ -59,37 +61,54 @@ class _SyncState extends State<Sync> {
   }
 }
 
-class Graph extends StatelessWidget {
+
+
+class Graph extends StatefulWidget {
   final  title,datasource,units;
   Graph(this.title,this.datasource,this.units);
 
   @override
+  State<Graph> createState() => _GraphState();
+}
+
+class _GraphState extends State<Graph> {
+  ZoomPanBehavior? _zoomPanBehavior;
+  @override
+  void initState(){
+    _zoomPanBehavior = ZoomPanBehavior(
+      enableDoubleTapZooming: true,
+      enablePinching: true
+    );
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Container(
         child: SfCartesianChart(
+          zoomPanBehavior: _zoomPanBehavior,
           enableAxisAnimation: true,
           plotAreaBorderWidth: 0,
-          title: ChartTitle(text:title),
+          title: ChartTitle(text:widget.title),
           legend: Legend(
-              isVisible: true, overflowMode: LegendItemOverflowMode.wrap),
+              isVisible: true, overflowMode: LegendItemOverflowMode.scroll),
           primaryXAxis: DateTimeAxis(
           dateFormat: DateFormat.Hm(),
               edgeLabelPlacement: EdgeLabelPlacement.shift,
-              interval:5,
+              interval:10,
               majorGridLines: const MajorGridLines(width: 1)),
           primaryYAxis: NumericAxis(
-              labelFormat: '{value}$units',
+              labelFormat: '{value}${widget.units}',
               axisLine: const AxisLine(width: 1),
               majorTickLines:
               const MajorTickLines(color: Colors.transparent)),
           series: <LineSeries<_ChartData, DateTime>>[
             LineSeries<_ChartData, DateTime>(
               animationDuration: 2500,
-              dataSource: datasource,
+              dataSource: widget.datasource,
               xValueMapper: (_ChartData sales, _) =>sales.x,
               yValueMapper: (_ChartData sales, _) => sales.y,
               width:  2,
-              name: title,
+              name: widget.title,
               color: Colors.green
             ),
           ],

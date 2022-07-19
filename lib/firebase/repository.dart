@@ -6,8 +6,8 @@ import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/utils/enum.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cache/flutter_cache.dart' as cache;
 
 class FirebaseRepository {
   static final FirebaseRepository _firebaserepository =
@@ -20,7 +20,6 @@ class FirebaseRepository {
   FirebaseRepository._internal();
 
   Emitter Exceptionemitter = Emitter();
-  var user_data;
   final Dio _httpClient = Dio();
 
   final base_url = "https://us-central1-testproject-3c42a.cloudfunctions.net/";
@@ -58,6 +57,10 @@ class FirebaseRepository {
       "assign_sensor": "assign_sensor athlete_id sensor_id",
       "unassign_sensor": "unassign_sensor sensor_id",
       "mysensor": "mysensor",
+      "get-session-data": "get-session-data session_id",
+      "view-session-data": "view-session-data session_id",
+      "get_report": "get_report",
+      "get_manager": "get_manager",
     }
   };
 
@@ -101,9 +104,9 @@ class FirebaseRepository {
             "Pending email verification...\nIf you cant find verification link in your inbox please do check your SPAM folder once");
         return;
       }
-      await cacheProfile();
+      var profile = await cacheProfile();
       AppData().user = user.user;
-      return 'Signed in with the email $email\nHello $user_data';
+      return 'Signed in with the email $email\nWelcome $profile';
     } on FirebaseAuthException catch (e) {
       Exceptionemitter.addException(e.toString());
       throw e.code;
@@ -131,13 +134,11 @@ class FirebaseRepository {
   Future get signout async {
     try {
       if (firebaseAuth.currentUser != null) {
+        cache.destroy('key');
         AppData().user = null;
         AppData().accessType = null;
         AppData().org_id = null;
         await firebaseAuth.signOut();
-        print(user_data);
-        user_data = '';
-        user_data = '';
         return "Signed out successfully!";
       }
       Exceptionemitter.addException(
@@ -762,8 +763,7 @@ class FirebaseRepository {
             result.data['sensor_token'].substring(i, i + 2),
             radix: 16));
       }
-      debugPrint(hex_to_int.toString());
-      return result.data;
+      return result.data.toString() + "\nByte Array:" + hex_to_int.toString();
     } on FirebaseFunctionsException catch (e) {
       Exceptionemitter.addException(e.toString());
       throw e;
@@ -778,19 +778,19 @@ class FirebaseRepository {
         'Athlete access': 'Athletes',
         'Organization Admin access': 'Organization'
       };
-      var user_data1 = await firestore
+      var user_data = await firestore
           .collection(type[access_type].toString())
           .where('email', isEqualTo: firebaseAuth.currentUser?.email)
           .get();
-      if (access_type == 'Organization Admin access') {
-        user_data = user_data1.docs[0].data()['name'].toString();
-        return user_data;
-      }
-      user_data = user_data1.docs[0].data()['first_name'].toString() +
-          " " +
-          user_data1.docs[0].data()['last_name'].toString();
-      return (user_data);
-
+      if (access_type == 'Organization Admin access')
+        cache.write('key', user_data.docs[0].data()['name'].toString());
+      else
+        cache.write(
+            'key',
+            user_data.docs[0].data()['first_name'].toString() +
+                " " +
+                user_data.docs[0].data()['last_name'].toString());
+      return (cache.load('key'));
     } catch (e) {
       throw (e);
     }
@@ -801,11 +801,12 @@ class FirebaseRepository {
       HttpsCallableResult result = await FirebaseFunctions.instance
           .httpsCallable('get_session_data')
           .call({'session_id': '$session_id'});
-      var debug_info='';
-      for(var i=0;i<result.data['debug_info'].length;i++) {
-        debug_info+=result.data['debug_info'][i].toString()+'\n';
+      var debug_info = '';
+      for (var i = 0; i < result.data['debug_info'].length; i++) {
+        debug_info += result.data['debug_info'][i].toString() + '\n';
       }
-      Exceptionemitter.addException(debug_info);
+
+      return debug_info;
     } catch (e) {
       throw (e);
     }
@@ -815,41 +816,30 @@ class FirebaseRepository {
     try {
       return 'Plotting the Data......';
     } catch (e) {
-      throw(e);
+      throw (e);
     }
   }
-  addSession(String filename)async {
+
+  addSession(String filename) async {
     String hex = await rootBundle.loadString(filename);
-    var hex_list=hex.split('\n');
-    var data={
-      'athlete_id':'MeeQ8Qn9GALmE5ths88x',
-      'coach_id':'Hrw6ltgPMXOGoaKbR5rf',
-      'created':DateTime.now(),
-      'start_time':DateTime.now(),
-      'end_time':DateTime.now(),
-      'end_timezone':'iuy',
-      'firmware_version':'ijuygfc',
-      'hex_data':hex_list,
-      'name':null,
-      'read_packets':null,
-      'sensor':null,
-      'session_completed_by':null,
-      'session_status':null
+    var hex_list = hex.split('\n');
+    var data = {
+      'athlete_id': 'MeeQ8Qn9GALmE5ths88x',
+      'coach_id': 'Hrw6ltgPMXOGoaKbR5rf',
+      'created': DateTime.now(),
+      'start_time': DateTime.now(),
+      'end_time': DateTime.now(),
+      'end_timezone': 'iuy',
+      'firmware_version': 'ijuygfc',
+      'hex_data': hex_list,
+      'name': null,
+      'read_packets': null,
+      'sensor': null,
+      'session_completed_by': null,
+      'session_status': null
     };
     firestore.collection('Session').add(data);
     return 'session created';
-    // var a=await firestore.collection('Athlete').doc(filename).delete();
-    // var batch = firestore.batch();
-    // // a.forEach((doc) => {
-    // // batch.delete(doc.reference)
-    // // });
-    // // var batch = firestore.batch();
-    //
-    //
-    // batch.delete(a);
-
-    // await batch.commit();
-    // await batch.commit();
   }
 
   unassignSensor(String sensor_id) async {
