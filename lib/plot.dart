@@ -128,7 +128,10 @@ class _GraphState extends State<Graph> {
           interval: 10,
           majorGridLines: const MajorGridLines(width: 1)),
       primaryYAxis: NumericAxis(
-          labelFormat: '{value}${widget.units}',
+          title: AxisTitle(
+              text: widget.units==""?'${widget.title}':'${widget.title} (${widget.units})',
+              textStyle: TextStyle(fontSize: 12)),
+          labelFormat: '{value}',
           axisLine: const AxisLine(width: 1),
           majorTickLines: const MajorTickLines(color: Colors.transparent)),
       series: <LineSeries<_ChartData, DateTime>>[
