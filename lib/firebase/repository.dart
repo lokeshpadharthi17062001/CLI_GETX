@@ -57,6 +57,7 @@ class FirebaseRepository {
       "assign_sensor": "assign_sensor athlete_id sensor_id",
       "unassign_sensor": "unassign_sensor sensor_id",
       "mysensor": "mysensor",
+      "add-session":"add-session filename",
       "get-session-data": "get-session-data session_id",
       "view-session-data": "view-session-data session_id",
       "get_report": "get_report",
@@ -210,8 +211,11 @@ class FirebaseRepository {
             .get();
         return athlete.docs[0].data();
       } else {
-        Exceptionemitter.addException(
-            "You are not authorized to access this data");
+        QuerySnapshot athlete = await firestore
+            .collection(Collections.Organization.id)
+            .where("email", isEqualTo: email)
+            .get();
+        return athlete.docs[0].data();
       }
     } on FirebaseException catch (e) {
       Exceptionemitter.addException(e.toString());
@@ -823,6 +827,7 @@ class FirebaseRepository {
   addSession(String filename) async {
     String hex = await rootBundle.loadString(filename);
     var hex_list = hex.split('\n');
+    hex_list.removeAt(0);
     var data = {
       'athlete_id': 'MeeQ8Qn9GALmE5ths88x',
       'coach_id': 'Hrw6ltgPMXOGoaKbR5rf',
@@ -832,12 +837,18 @@ class FirebaseRepository {
       'end_timezone': 'iuy',
       'firmware_version': 'ijuygfc',
       'hex_data': hex_list,
-      'name': null,
+      'name': filename,
       'read_packets': null,
       'sensor': null,
       'session_completed_by': null,
       'session_status': null
     };
+    var session_exists=await firestore
+        .collection('Session')
+        .where('name', isEqualTo:filename)
+        .get();
+    if(session_exists.size!=0)
+      return 'session already exists';
     firestore.collection('Session').add(data);
     return 'session created';
   }
