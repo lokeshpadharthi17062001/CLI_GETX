@@ -31,6 +31,8 @@ class FirebaseRepository {
   var help_response = {
     "message": {
       "test": "test message",
+      "invite_org":"invite_org email",
+      "create_org":"create_org name email mobile",
       "signup": "signup email password",
       "signin": "signin email password",
       "signout": "signout",
@@ -57,31 +59,34 @@ class FirebaseRepository {
       "assign_sensor": "assign_sensor athlete_id sensor_id",
       "unassign_sensor": "unassign_sensor sensor_id",
       "mysensor": "mysensor",
-      "add-session":"add-session filename",
+      "add-session": "add-session filename",
       "get-session-data": "get-session-data session_id",
       "view-session-data": "view-session-data session_id",
       "get_report": "get_report",
       "get_manager": "get_manager",
+      "cls": "cls",
     }
+  };
+  var type = {
+    'Coach access': 'Coach',
+    'Athlete access': 'Athletes',
+    'Organization Admin access': 'Organization'
   };
 
   Future signUp(String email, String password) async {
     try {
       if (firebaseAuth.currentUser != null) {
         Exceptionemitter.addException(
-            'User already logged in,Signout the user and Try Again....');
+            'User already logged in, Signout and  Try Again....');
         return;
       }
-      late UserCredential user;
       await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((userData) {
         userData.user?.sendEmailVerification();
-        user = userData;
-        AppData().user = user.user;
       });
       await firebaseAuth.signOut();
-      return "Signed Up Successfully and Verification mail sent to $email";
+      return "Verification mail sent to $email\nVerify the Email and continue to signin...";
     } on FirebaseAuthException catch (e) {
       Exceptionemitter.addException(e.toString());
       throw e.code;
@@ -116,8 +121,11 @@ class FirebaseRepository {
     }
   }
 
+  clear_response() async {}
+
   Future get currentUser async {
     try {
+      await checkAuth();
       if (firebaseAuth.currentUser != null) {
         AppData().user = firebaseAuth.currentUser;
         return firebaseAuth.currentUser;
@@ -236,20 +244,14 @@ class FirebaseRepository {
             : (mapping[1].substring(0, 1) == '_')
                 ? int.parse(mapping[1].substring(1, mapping[1].length))
                 : mapping[1];
-        print(mapping[1].substring(0, 1));
       }
       var access_type = await accessType;
-      var type = {
-        'Coach access': 'Coach',
-        'Athlete access': 'Athletes',
-        'Organization Admin access': 'Organization'
-      };
       var org = await firestore
           .collection(type[access_type].toString())
           .where('email', isEqualTo: firebaseAuth.currentUser?.email)
           .get();
       await firestore
-          .collection('Organization')
+          .collection(type[access_type].toString())
           .doc(org.docs[0].id)
           .update(field_set);
     } catch (e) {
@@ -259,7 +261,7 @@ class FirebaseRepository {
 
   Future get orgData async {
     try {
-      // await checkAuth();
+      await checkAuth();
       if (firebaseAuth.currentUser != null) {
         String uid = firebaseAuth.currentUser!.uid;
 
@@ -440,11 +442,6 @@ class FirebaseRepository {
     try {
       if (firebaseAuth.currentUser != null) {
         var access_type = await accessType;
-        var type = {
-          'Athlete access': 'Athletes',
-          'Coach access': 'Coach',
-          'Organization Admin access': 'Organization'
-        };
         var user_exists = await firestore
             .collection(type[access_type].toString())
             .where("email", isEqualTo: firebaseAuth.currentUser?.email)
@@ -515,7 +512,7 @@ class FirebaseRepository {
     try {
       var requestUrl = base_url + 'inviteOrganization?mail=$mail';
       var response = await Dio().post(requestUrl);
-      return response;
+      return response.data;
     } catch (e) {
       throw e;
     }
@@ -531,7 +528,7 @@ class FirebaseRepository {
         'gst': null,
       });
       var requestUrl = base_url + 'createOrganization';
-      var response = await Dio().post(
+      var response = await _httpClient.post(
         requestUrl,
         data: data,
       );
@@ -597,7 +594,6 @@ class FirebaseRepository {
           'weight_kg': null,
         });
       }
-
       return result.data;
     } on FirebaseFunctionsException catch (e) {
       Exceptionemitter.addException(e.toString());
@@ -777,11 +773,6 @@ class FirebaseRepository {
   cacheProfile() async {
     try {
       var access_type = await accessType;
-      var type = {
-        'Coach access': 'Coach',
-        'Athlete access': 'Athletes',
-        'Organization Admin access': 'Organization'
-      };
       var user_data = await firestore
           .collection(type[access_type].toString())
           .where('email', isEqualTo: firebaseAuth.currentUser?.email)
@@ -805,11 +796,17 @@ class FirebaseRepository {
       HttpsCallableResult result = await FirebaseFunctions.instance
           .httpsCallable('get_session_data')
           .call({'session_id': '$session_id'});
-      var debug_info = '';
+      var debug_info = '',res='';
       for (var i = 0; i < result.data['debug_info'].length; i++) {
         debug_info += result.data['debug_info'][i].toString() + '\n';
       }
-
+      result.data?.forEach((key, value) {
+        if (value.runtimeType == List || value.runtimeType == String)
+          if (value.length == 0) res += '$key got null' + '\n';
+        else if (value.runtimeType == int)
+          if (value == 0) res += '$key got null' + '\n';
+      });
+      if (res != '') Exceptionemitter.addException(res);
       return debug_info;
     } catch (e) {
       throw (e);
@@ -827,15 +824,15 @@ class FirebaseRepository {
   addSession(String filename) async {
     String hex = await rootBundle.loadString(filename);
     var hex_list = hex.split('\n');
-    hex_list.removeAt(0);
+    if (hex_list[0] == '') hex_list.removeAt(0);
     var data = {
-      'athlete_id': 'MeeQ8Qn9GALmE5ths88x',
-      'coach_id': 'Hrw6ltgPMXOGoaKbR5rf',
+      'athlete_id': null,
+      'coach_id': null,
       'created': DateTime.now(),
-      'start_time': DateTime.now(),
-      'end_time': DateTime.now(),
-      'end_timezone': 'iuy',
-      'firmware_version': 'ijuygfc',
+      'start_time': null,
+      'end_time': null,
+      'end_timezone': null,
+      'firmware_version': null,
       'hex_data': hex_list,
       'name': filename,
       'read_packets': null,
@@ -843,12 +840,11 @@ class FirebaseRepository {
       'session_completed_by': null,
       'session_status': null
     };
-    var session_exists=await firestore
+    var session_exists = await firestore
         .collection('Session')
-        .where('name', isEqualTo:filename)
+        .where('name', isEqualTo: filename)
         .get();
-    if(session_exists.size!=0)
-      return 'session already exists';
+    if (session_exists.size != 0) return 'session already exists';
     firestore.collection('Session').add(data);
     return 'session created';
   }
@@ -875,7 +871,6 @@ class FirebaseRepository {
           .collection(Collections.Athletes.id)
           .where('email', isEqualTo: firebaseAuth.currentUser?.email)
           .get();
-      print(firebaseAuth.currentUser?.email);
       var my_sensor = await firestore
           .collection(Collections.Sensor.id)
           .where('athlete_id', isEqualTo: athlete_id.docs[0].id)
@@ -936,26 +931,5 @@ class FirebaseRepository {
       return res.substring(0, res.length - 1);
     }
     return help_response['message']![function];
-  }
-
-  cfCallableTest() async {
-    try {
-      HttpsCallableResult result =
-          await FirebaseFunctions.instance.httpsCallable('testFunc').call();
-      return result.data;
-    } on FirebaseFunctionsException catch (e) {
-      Exceptionemitter.addException(e.toString());
-      throw e;
-    }
-  }
-
-  cfHttpTest() async {
-    try {
-      Response result = await _httpClient.get(base_url + "randomNumber");
-      return result.data;
-    } on DioError catch (e) {
-      Exceptionemitter.addException(e.toString());
-      throw e;
-    }
   }
 }

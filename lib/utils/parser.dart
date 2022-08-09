@@ -107,9 +107,10 @@ class CommandParser {
         case Command.viewSessiondata:
           checkLen(splitted.length, 1);
           return FirebaseRepository().viewSessiondata(splitted[1]);
-
         case Command.cacheProfile:
           return FirebaseRepository().cacheProfile();
+        case Command.clear_response:
+          return FirebaseRepository().clear_response();
         case Command.unknown:
           throw "Unknown Command";
         default:

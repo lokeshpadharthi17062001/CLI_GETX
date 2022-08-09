@@ -1,4 +1,4 @@
-import 'package:cloud_functions/cloud_functions.dart';
+import 'package:get/get.dart';
 import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/view/cli.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class ConqurCLIApp extends StatelessWidget {
   const ConqurCLIApp({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Conqur Backend Tester',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -28,10 +28,7 @@ class ConqurCLIApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
-      home: ChangeNotifierProvider(
-        create: (context) => Emitter(),
-        child: CLI(),
-      ),
+      home: CLI(),
     );
   }
 }

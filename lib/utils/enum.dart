@@ -2,6 +2,7 @@ import 'package:conqur_backend_test/utils/constants.dart';
 
 enum Command {
   test,
+  clear_response,
   signUp,
   signIn,
   signOut,
@@ -48,6 +49,8 @@ extension CommandParserExtension on String {
     switch (this) {
       case TEST_COMMAND:
         return Command.test;
+      case CLEAR_RESPONSE:
+        return Command.clear_response;
       case SIGN_UP_COMMAND:
         return Command.signUp;
       case SIGN_IN_COMMAND:
@@ -147,7 +150,7 @@ extension CollectionsExtension on Collections {
   String get id {
     switch (this) {
       case Collections.Athletes:
-        return ATHLETE_COLLECTION;
+        return ATHLETES_COLLECTION;
       case Collections.Coach:
         return COACH_COLLECTION;
       case Collections.Team:

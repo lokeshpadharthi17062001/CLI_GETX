@@ -1,7 +1,8 @@
 import 'package:conqur_backend_test/utils/constants.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get.dart';
 
-class Emitter extends ChangeNotifier {
+class Emitter {
   static final Emitter _emitter = Emitter._internal();
 
   factory Emitter() {
@@ -10,7 +11,7 @@ class Emitter extends ChangeNotifier {
 
   Emitter._internal();
 
-  final List<Widget> data = [];
+  final data = [].obs;
 
   void addCommand(String command) {
     data.add(Text(
@@ -18,7 +19,7 @@ class Emitter extends ChangeNotifier {
       style: TextStyle(color: COMMAND_COLOR, fontSize: FONT_SIZE),
     ));
     data.add(SizedBox(height: 10));
-    notifyListeners();
+    // notifyListeners();
   }
 
   void addResponse(String response) {
@@ -27,7 +28,6 @@ class Emitter extends ChangeNotifier {
       style: TextStyle(color: RESPONSE_COLOR, fontSize: FONT_SIZE),
     ));
     data.add(SizedBox(height: 10));
-    notifyListeners();
   }
 
   void addResponseList(List response) {
@@ -45,7 +45,6 @@ class Emitter extends ChangeNotifier {
       },
     ));
     data.add(SizedBox(height: 10));
-    notifyListeners();
   }
 
   void addException(String response) {
@@ -54,6 +53,9 @@ class Emitter extends ChangeNotifier {
       style: TextStyle(color: EXCEPTION_COLOR, fontSize: FONT_SIZE),
     ));
     data.add(SizedBox(height: 10));
-    notifyListeners();
+  }
+
+  void removeResponse(){
+    data.clear();
   }
 }

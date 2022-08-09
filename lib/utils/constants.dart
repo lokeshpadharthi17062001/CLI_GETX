@@ -7,6 +7,7 @@ const double FONT_SIZE = 16;
 const Color RESPONSE_COLOR = Colors.white;
 Color COMMAND_COLOR = Colors.greenAccent[400]!;
 const Color EXCEPTION_COLOR = Colors.red;
+const String CLEAR_RESPONSE="cls";
 
 //commands
 const String TEST_COMMAND = "test";
@@ -52,7 +53,7 @@ const String UNASSIGN_SENSOR = "unassign_sensor";
 const String ASSIGNED_SENSOR="mysensor";
 
 //collections
-const String ATHLETE_COLLECTION = "Athletes";
+const String ATHLETES_COLLECTION = "Athletes";
 const String COACH_COLLECTION = "Coach";
 const String TEAM_COLLECTION = "Team";
 const String ORGANIZATION_COLLECTION = "Organization";
