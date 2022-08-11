@@ -48,6 +48,7 @@ dependencies:
   flutter_cache: ^0.1.0
   syncfusion_flutter_sliders: ^20.2.39
   get: ^4.6.5
+  file_picker: ^5.0.1
 
 dev_dependencies:
   flutter_test:

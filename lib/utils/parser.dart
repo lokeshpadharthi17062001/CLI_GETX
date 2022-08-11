@@ -99,8 +99,7 @@ class CommandParser {
         case Command.getmanager:
           return FirebaseRepository().getManager();
         case Command.createSession:
-          checkLen(splitted.length, 1);
-          return FirebaseRepository().addSession(splitted[1]);
+          return FirebaseRepository().addSession();
         case Command.getSessiondata:
           checkLen(splitted.length, 1);
           return FirebaseRepository().getSessiondata(splitted[1]);

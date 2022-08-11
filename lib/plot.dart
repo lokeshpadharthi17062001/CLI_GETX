@@ -76,51 +76,68 @@ class _SyncState extends State<Sync> {
         child: Column(
           children: [
             Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: SfRangeSelector(
-                      activeColor: Colors.green,
-                      min: _rangeController?.start,
-                      max: _rangeController?.end,
-                      showLabels: true,
-                      interval: (hour_wise) ? 2 : 15,
-                      dateFormat: DateFormat.jm(),
-                      labelPlacement: LabelPlacement.onTicks,
-                      dateIntervalType: (hour_wise)
-                          ? DateIntervalType.hours
-                          : DateIntervalType.minutes,
-                      enableTooltip: true,
-                      controller: _rangeController,
-                      tooltipTextFormatterCallback:
-                          (dynamic actualLabel, String formattedText) {
-                        return DateFormat.jm().format(actualLabel);
-                      },
-                      child: Center(),
+              child: Align(
+                alignment: Alignment.center,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SfRangeSelector(
+                        activeColor: Colors.green,
+                        min: _rangeController?.start,
+                        max: _rangeController?.end,
+                        showLabels: true,
+                        enableDeferredUpdate: true,
+                        interval: (hour_wise) ? 2 : 15,
+                        dateFormat: DateFormat.jm(),
+                        onChanged: (SfRangeValues){},
+                        labelPlacement: LabelPlacement.onTicks,
+                        dateIntervalType: (hour_wise)
+                            ? DateIntervalType.hours
+                            : DateIntervalType.minutes,
+                        enableTooltip: true,
+                        controller: _rangeController,
+                        tooltipTextFormatterCallback:
+                            (dynamic actualLabel, String formattedText) {
+                          return DateFormat.jm().format(actualLabel);
+                        },
+                        child: Center(),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      _rangeController?.start = _values?.start;
-                      _rangeController?.end = _values?.end;
-                    },
-                    splashColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    icon: Icon(Icons.refresh),
-                  ),
-                ],
+                    Text("${_rangeController?.end.minute}"),
+                    IconButton(
+                      onPressed: () {
+                        _rangeController?.start = _values?.start;
+                        _rangeController?.end = _values?.end;
+                      },
+                      splashColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: Icon(Icons.refresh),
+                    ),
+                  ],
+                ),
               ),
             ),
             Expanded(
                 flex: 2,
-                child: Graph(title: 'RRI', datasource:chartData, units:'ms', range_controller:_rangeController)),
+                child: Graph(
+                    title: 'RRI',
+                    datasource: chartData,
+                    units: 'ms',
+                    range_controller: _rangeController)),
             Expanded(
                 flex: 2,
-                child: Graph(title: 'ACC', datasource: chartDatatwo, units: 'd m/s2', range_controller: _rangeController)),
+                child: Graph(
+                    title: 'ACC',
+                    datasource: chartDatatwo,
+                    units: 'd m/s2',
+                    range_controller: _rangeController)),
             Expanded(
                 flex: 2,
-                child: Graph(title: 'STEPS', datasource:chartDatathree, range_controller: _rangeController)),
+                child: Graph(
+                    title: 'STEPS',
+                    datasource: chartDatathree,
+                    range_controller: _rangeController)),
           ],
         ),
       ),
@@ -149,8 +166,7 @@ class _GraphState extends State<Graph> {
       enableAxisAnimation: true,
       legend:
           Legend(isVisible: true, overflowMode: LegendItemOverflowMode.scroll),
-      primaryXAxis:
-      DateTimeAxis(
+      primaryXAxis: DateTimeAxis(
           rangeController: widget.range_controller,
           visibleMinimum: widget.range_controller.start,
           visibleMaximum: widget.range_controller.end,

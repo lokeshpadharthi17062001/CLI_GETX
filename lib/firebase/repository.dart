@@ -6,8 +6,8 @@ import 'package:conqur_backend_test/utils/emitter.dart';
 import 'package:conqur_backend_test/utils/enum.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_cache/flutter_cache.dart' as cache;
+import 'package:file_picker/file_picker.dart';
 
 class FirebaseRepository {
   static final FirebaseRepository _firebaserepository =
@@ -821,8 +821,14 @@ class FirebaseRepository {
     }
   }
 
-  addSession(String filename) async {
-    String hex = await rootBundle.loadString(filename);
+  addSession() async {
+    var hex,filename;
+    final result = await FilePicker.platform.pickFiles(type: FileType.any, allowMultiple: false);
+    if (result?.files.first != null){
+      var fileBytes = result?.files.first.bytes;
+      filename=result?.files.first.name;
+      hex=String.fromCharCodes(fileBytes!);
+    }
     var hex_list = hex.split('\n');
     if (hex_list[0] == '') hex_list.removeAt(0);
     var data = {
